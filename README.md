@@ -80,7 +80,8 @@ By executing a **Python Z-score normalization script** over the aggregated datab
 │   ├── 02_normalization.sql     # 3NF Schema creation & Data Migration
 │   ├── 03_views_functions.sql   # Custom segmentation logic & Reporting views
 │   ├── 04_analytic_queries.sql  # Complex trend & spatial analysis
-│   └── 05_performance_ops.sql   # Indexing & EXPLAIN ANALYZE benchmarks
+│   |── 05_performance_ops.sql   # Indexing & EXPLAIN ANALYZE benchmarks  
+|   |__ 06_zscore_analysis.py    # Identifying thresholds by calculating z-scores (Python)
 └── presentation/       # PDF Executive Summary & SQL Analysis visuals (Incoming)
 ```
 
