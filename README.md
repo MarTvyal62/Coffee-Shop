@@ -94,7 +94,7 @@ By executing a **Python Z-score normalization script** over the aggregated datab
 ### Installation & Deployment
 1. **Clone the repo:**
    ```bash
-   git clone https://github.com/Hrz17PMardev/Coffee-Shop.git
+   git clone https://github.com/MarTvyal62/Coffee-Shop.git
    ```
 2. **Go to the relevant folder:**
    ```bash
