@@ -113,5 +113,5 @@ By executing a **Python Z-score normalization script** over the aggregated datab
 ## 🔄 Roadmap
 - [x] **Phase 1:** Relational Database Design & Normalization (SQL).
 - [x] **Phase 2:** Spatial Analytics Integration (PostGIS).
-- [ ] **Phase 3:** Advanced Statistical Analysis & Z-Score outlier detection (Python/Pandas).
+- [x] **Phase 3:** Advanced Statistical Analysis & Z-Score outlier detection (Python/Pandas).
 - [ ] **Phase 4:** Interactive Storytelling & Executive Dashboards (Tableau) - **Expected June 2026**.
