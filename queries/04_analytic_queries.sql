@@ -203,9 +203,9 @@ JOIN analytics.stores s ON s.store_id = sr.store_id
 JOIN analytics.store_locations sl ON sl.location_id = s.location_id
 ;
 
-CREATE OR REPLACE FUNCTION store_revenue_performance ( 
-	p_total_revenue numeric(10,2) 
-	)
+---- Store Revenue segmentation function, mapping total revenue into Low/Medium/High 
+---- based on High/Low thresholds calculated in 06_zscore_analysis.py.
+CREATE OR REPLACE FUNCTION store_revenue_performance ( p_total_revenue numeric(10,2) )
 RETURNS TEXT
 LANGUAGE sql
 AS $$
@@ -218,9 +218,9 @@ AS $$
 	;
 $$;
 
-CREATE OR REPLACE FUNCTION sold_quantity_per_store ( 
-	p_total_units_sold BIGINT 
-	)
+---- Store Quantity segmentation function, mapping total quantity sold into Developing/Rising/Elite 
+---- based on High/Low thresholds calculated in 06_zscore_analysis.py.
+CREATE OR REPLACE FUNCTION sold_quantity_per_store ( p_total_units_sold BIGINT )
 RETURNS TEXT
 LANGUAGE sql
 AS $$
