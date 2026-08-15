@@ -29,39 +29,25 @@ query = "SELECT location_name, total_units_sold, total_revenue FROM store_ranks_
 df = pd.read_sql_query(query, conn)
 conn.close()
 
-print("\n--- Raw Data Snapshot ---")
-print(df)
 
-# 5. Calculate Z-Scores using SciPy
-df['revenue_zscore'] = stats.zscore(df['total_revenue'])
-df['quantity_zscore'] = stats.zscore(df['total_units_sold'])
+# 5. --- UPDATED: Robust Modified Z-Score Calculation ---
+def modified_zscore(series):
+    median = series.median()
+    # scale='normal' multiplies MAD by ~1.4826 for consistency with std dev
+    mad = stats.median_abs_deviation(series, scale='normal', nan_policy='omit')
+    return (series - median) / mad.replace(0, 1) # Simple zero-division protection
 
-# 6. Programmatic Segmentation based on Standard Deviations (Z-Scores)
-# - Z < -0.5: Low / Developing
-# - -0.5 <= Z <= 0.5: Medium / Rising
-# - Z > 0.5: High / Elite
-def segment_by_z(z_score, low_label, mid_label, high_label):
-    if z_score < -0.5:
-        return low_label
-    elif -0.5 <= z_score <= 0.5:
-        return mid_label
-    else:
-        return high_label
+df['revenue_zscore'] = modified_zscore(df['total_revenue'])
+df['quantity_zscore'] = modified_zscore(df['total_units_sold'])
 
-df['revenue_tier'] = df['revenue_zscore'].apply(segment_by_z, args=('Low', 'Medium', 'High'))
-df['volume_tier'] = df['quantity_zscore'].apply(segment_by_z, args=('Developing', 'Rising', 'Elite'))
+# 6. --- Segmentation logic updated for modified z-scores ---
+def segment_by_z(z_score):
+    if z_score < -0.5: return 'Low'
+    elif z_score > 0.5: return 'High'
+    else: return 'Medium'
 
-print("\n--- 📊 Statistical Z-Score Segmentation Results ---")
-print(df[['location_name', 'total_revenue', 'revenue_zscore', 'total_units_sold', 'quantity_zscore', 'revenue_tier', 'volume_tier']])
+df['revenue_tier'] = df['revenue_zscore'].apply(segment_by_z)
+df['volume_tier'] = df['quantity_zscore'].apply(segment_by_z)
 
-# 7. Output specific numbers to paste back into your SQL Functions
-print("\n💡 Suggested SQL Thresholds based on mean and standard deviation:")
-rev_mean = df['total_revenue'].mean()
-rev_std = df['total_revenue'].std()
-qty_mean = df['total_units_sold'].mean()
-qty_std = df['total_units_sold'].std()
-
-print(f"Revenue Low Threshold (Mean - 0.5*STD): {rev_mean - 0.5 * rev_std:.2f}")
-print(f"Revenue High Threshold (Mean + 0.5*STD): {rev_mean + 0.5 * rev_std:.2f}")
-print(f"Quantity Low Threshold (Mean - 0.5*STD): {qty_mean - 0.5 * qty_std:.2f}")
-print(f"Quantity High Threshold (Mean + 0.5*STD): {qty_mean + 0.5 * qty_std:.2f}")
+print(df[['location_name', 'revenue_zscore', 'revenue_tier']])
+print(df[['location_name', 'quantity_zscore', 'volume_tier']])
